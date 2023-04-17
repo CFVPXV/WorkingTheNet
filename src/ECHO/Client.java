@@ -1,11 +1,9 @@
 package ECHO;
 
-import java.io.DataInputStream;
-import java.io.DataOutput;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.util.Random;
+import java.util.logging.Logger;
 
 public class Client implements Runnable{
 
@@ -22,16 +20,22 @@ public class Client implements Runnable{
         port = p;
         clientID = name;
 
-        try{
 
-            System.out.println("Connecting to server...");
-            con = new Socket(ip,port);
-            in = new DataInputStream(con.getInputStream());
-            out = new DataOutputStream(con.getOutputStream());
-
+        try {
+            //But again, its a new object each time...
+            Card x = new Card('0',0);
+            ObjectInputStream wr = null;
+            wr = new ObjectInputStream(con.getInputStream());
+            System.out.println("Sending card");
+            x = (Card) wr.readObject();
+            ObjectOutputStream r = new ObjectOutputStream(con.getOutputStream());
+            r.writeObject(x);
         } catch (IOException e) {
-           System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
+
     }
 
 
